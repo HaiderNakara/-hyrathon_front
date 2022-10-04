@@ -1,49 +1,91 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Todo as Task } from "../app/shared/models/task.model";
+import { Category, Product } from "./shared/models/product.model";
 import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class TaskStorageService {
-  tasks: Task[] = [];
+  products: Product[] = [];
+  productUrl = environment.backendUrl + '/products';
+  categories: Category[] = [];
+  categoryUrl = environment.backendUrl + '/categories';
+
   initialized: boolean = false;
   constructor(
     private http: HttpClient
   ) { }
-  createTodo(title: string, note: string) {
-    return this.http.post(`${environment.backendUrl}`, {
-      title,
-      note
+
+  createProduct(name: string,
+    description: string,
+    price: number,
+    category: string) {
+    return this.http.post(this.productUrl, {
+      name,
+      description,
+      price,
+      category
+
     }).subscribe(res => {
       console.log('Created');
     }
     );
   }
-  getToDos(): Observable<Task[]> {
-    return this.http.get<Task[]>(environment.backendUrl);
+  getProduct(page: number): Observable<Product[]> {
+    //  add page in query param
+    return this.http.get<Product[]>(this.productUrl + '?page=' + page);
   }
-  get(id: string): Observable<Task> {
-    return this.http.get<Task>(`${environment.backendUrl}/${id}`);
+  get(id: string): Observable<Product> {
+    return this.http.get<Product>(`${this.productUrl}/${id}`);
   }
 
-  editTodo(id: string, title: string, note: string) {
-    console.log(id);
+  editProduct(id: string, name: string,
+    description: string,
+    price: number,
+    category: string) {
 
-    let editUrl = `${environment.backendUrl}/${id}`
+    let editUrl = `${this.productUrl}/${id}`
     return this.http.patch(editUrl, {
-      title,
-      note
+      name,
+      description,
+      price,
+      category
     })
   }
-  deleteTodo(id: string): Observable<any> {
-    let deleteUrl = `${environment.backendUrl}/${id}`
+  deleteProduct(id: string): Observable<any> {
+    let deleteUrl = `${this.productUrl}/${id}`
     return this.http.delete(deleteUrl);
   }
-  private handleError(error: any): Promise<any> {
-    console.error('An error occurred', error);
-    return Promise.reject(error.message || error);
+
+  createCategory(name: string,
+    description: string) {
+    return this.http.post(this.categoryUrl, {
+      name,
+      description
+    }).subscribe(res => {
+      console.log('Created');
+    }
+    );
+  }
+  getCategory(): Observable<Category[]> {
+    return this.http.get<Category[]>(this.categoryUrl);
+  }
+  getCat(id: string): Observable<Category> {
+    return this.http.get<Category>(`${this.categoryUrl}/${id}`);
+  }
+  editCategory(id: string, name: string,
+    description: string) {
+
+    let editUrl = `${this.categoryUrl}/${id}`
+    return this.http.patch(editUrl, {
+      name,
+      description
+    })
+  }
+  deleteCategory(id: string): Observable<any> {
+    let deleteUrl = `${this.categoryUrl}/${id}`
+    return this.http.delete(deleteUrl);
   }
 
 }

@@ -5,18 +5,19 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-task-add',
-  templateUrl: './task-add.component.html',
-  styleUrls: ['./task-add.component.css']
+  templateUrl: './category-add.component.html',
+  styleUrls: ['./category-add.component.css']
 })
-export class TaskAddComponent {
-  title = new FormControl('');
-  note = new FormControl('');
+export class CategoryAddComponent {
+  name = new FormControl('');
+  description = new FormControl('');
+
   constructor(private storage: TaskStorageService, private router: Router) {
   }
   createTask() {
-    this.storage.createTodo(
-      this.title.value, this.note.value,
+    this.storage.createCategory(
+      this.name.value, this.description.value,
     );
-    this.router.navigate(['/tasks'])
+    this.router.navigate(['/category']);
   }
 }
